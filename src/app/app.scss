@@ -66,3 +66,24 @@ ion-list-header
     background: linear-gradient(to right, rgba(255,0,0,$opacityFrom), rgba(255,255,0,$opacityTo)); /* Standard syntax (must be last) */
 }
 
+@keyframes ngforani
+{
+  0%
+  {
+    padding-left: 100px;
+    background-color:gray;
+  }
+  100%
+  {
+    padding-left: 0px;
+  } 
+}
+.ngfor
+{
+  animation: ngforani 1s;
+}
+
+.isplaying
+{
+    background-color:greenyellow !important;
+}

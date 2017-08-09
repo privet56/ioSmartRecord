@@ -3,10 +3,12 @@
     <p *ngIf="sounds.length < 1">
       no recordings yet.
     </p>
-
-    <ion-item-sliding *ngFor="let sound of sounds" #slidingItem class="halbtransparentbackground">
+    <!-- [@flyInOut]="'in'" -->
+    <ion-item-sliding *ngFor="let sound of sounds;trackBy:identifier" #slidingItem
+        class="halbtransparentbackground ngfor"
+        [ngClass]="{'isplaying':isPlaying(sound)}">
       <ion-item class="halbtransparentbackground">
-        {{sound.name | fn | date:'medium' }}
+        {{sound.name | fn2ts | date:'medium' }} {{isPlaying(sound) ? '(playing...)' : ''}}
       </ion-item>
       <ion-item-options side="right">
         <button ion-button icon-only (click)="playSound(slidingItem, sound)" color="secondary">

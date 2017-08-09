@@ -1,6 +1,6 @@
 ## ioSmartRecord: IONIC 3 App; recording & maintaining voice
 
-## UI:
+## UI
 ![smartrecord](https://raw.githubusercontent.com/privet56/ioSmartRecord/master/lexngclient.on.smartphone.gif)
 
 ### //TODO:
@@ -33,8 +33,11 @@
 . settings tab: configure min & max recording length
 
 . soundlist: track by name & animation
+	partly DONE:
+	'ngfor' css class works, but do better with @animations
 
 . replace onIonViewEnter code into ngOnInit
+    DONE
 
 . soundList: show size
 
@@ -43,7 +46,10 @@
 . name area: factor out into its own component
 
 . rename pipe to Fn2Ts
+    DONE
 
 . onPlaySound: just stop if same(=now playing) sound clicked again
 
 . replace About icon
+
+. when -git: -UI -pic

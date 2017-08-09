@@ -2,7 +2,7 @@ import { Pipe } from '@angular/core';
 import { SoundService } from './SoundService';
 
 @Pipe({
-    name: 'fn'
+    name: 'fn2ts'
 })
 
 export class FnPipe

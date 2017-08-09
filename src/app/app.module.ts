@@ -21,7 +21,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { NativeStorage } from '@ionic-native/native-storage';
 import { Media } from '@ionic-native/media';
 import { File } from '@ionic-native/file';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -38,6 +38,7 @@ import { File } from '@ionic-native/file';
     BrowserModule,
     HttpModule,
     FormsModule,
+    BrowserAnimationsModule,
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],

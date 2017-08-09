@@ -6,16 +6,17 @@ import { AlertController } from 'ionic-angular';
 import { Events } from 'ionic-angular';
 import { ToastController	}	from	'ionic-angular';
 import { Media, MediaObject } from '@ionic-native/media';
-import { File, Entry } from '@ionic-native/file';
+import { File, Entry, FileEntry } from '@ionic-native/file';
+import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'page-record',
   templateUrl: 'record.html'
 })
-export class RecordPage
+export class RecordPage implements OnInit
 {
   public static MAX_RECORDING_SECONDS:number = 33;
-  public static MIN_RECORDING_SECONDS:number = 5;
+  public static MIN_RECORDING_SECONDS:number = 3; //TODO: should be min 6
 
   @ViewChild('nameInputField') nameInputField;
   public timer:any = null;  //TODO: interrupt after 1 min recording
@@ -36,7 +37,8 @@ export class RecordPage
   {
 
   }
-	ionViewWillEnter()    //comes after ionViewDidLoad 
+  //ionViewWillEnter()    //comes after ionViewDidLoad
+  ngOnInit()
   {
     this.soundService.errors$.subscribe((error:string) => {
       this.addMsg(error);
@@ -50,6 +52,22 @@ export class RecordPage
 
     this.soundService.initName();
     this.soundService.initSounds(true);
+
+
+    /*{ //TODO: remove temporary code
+      this.file.listDir(this.file.applicationDirectory,'www').then(list => {
+
+        this.addMsg('RECORD:ONINIT:FOUND files#: '+list.length);
+
+        let f = (value:Entry, index:number, array) => {
+
+            this.addMsg('RECORD:ONINIT:FOUND: '+value.nativeURL);
+        }
+        list.forEach(f);
+        }).catch((error) => {
+            this.addMsg('RECORD:ONINIT: ERR: !list');
+        })
+    }*/
   }
 
   //https://stackoverflow.com/questions/42675727/how-to-block-navigation-to-other-tab-if-form-isnt-valid/42676245 	
@@ -92,11 +110,23 @@ export class RecordPage
       this.fileNameOfRecording = (new Date()).getTime()+SoundService.SOUNDFNPOSTFIX;
       try
       {
-        let dir:string = this.soundService.getSoundDir(true);
+        let dir:string = this.soundService.getSoundDir(true)+'/';
 
         this.file.createFile(dir, this.fileNameOfRecording, true/*replace*/).then(() => {
           let absFN = dir.replace(/^file:\/\//, '') + this.fileNameOfRecording;
+
+          this.addMsg("Record:onRecordStart INF: absFN:'"+absFN+"'");
+
           this.fileOfRecording = this.media.create(absFN);
+          
+
+          this.fileOfRecording.onError.subscribe(error => {
+            //error:MEDIA_ERROR
+            //MediaError.MEDIA_ERR_ABORTED = 1
+            this.addMsg("Record:onRecordStart ERR: fileOfRecording.onError");
+            this.addMsg(JSON.stringify(error));
+          });
+
           this.fileOfRecording.startRecord();
         },
         error => 
@@ -113,17 +143,18 @@ export class RecordPage
         this.addMsg("CATCH");
         this.addMsg(e);
       }
-      /*  //playing code:
-      file.play();
-      file.stop();
-      file.release();
-      */
     }
   }
   public saveRecording(recordingTime:number)
   {
+    //TODO: impl this: https://ionicframework.com/docs/native/media-capture/
+
     this.fileOfRecording.stopRecord();
     this.fileOfRecording.release();
+    let fn:string = this.fileNameOfRecording;
+    this.fileOfRecording = null;
+    this.fileNameOfRecording = null;
+    
 
     if(recordingTime < RecordPage.MIN_RECORDING_SECONDS)
     {
@@ -133,25 +164,31 @@ export class RecordPage
         showCloseButton: true, closeButtonText:'x', dismissOnPageChange:true, //cssClass:'toast',
         duration:	2000});
       toast.present();
-      this.file.removeFile(this.soundService.getSoundDir(true), this.fileNameOfRecording);
+      this.file.removeFile(this.soundService.getSoundDir(true), fn);
       this.fileOfRecording = null;
       this.fileNameOfRecording = null;      
       return;
     }
-    /*{
-      let fn:string = this.fileNameOfRecording;
-      this.file.checkFile(this.soundService.getSoundDir(true), fn).then(
-          (bExist) => this.addMsg("checkfile INF: file exists:"+bExist+" = "+this.soundService.getSoundDir(true)+fn),
+    this.soundService.addSound(this.fileNameOfRecording);
+    { //TODO: remove temporary code
+      this.file.checkFile(this.soundService.getSoundDir(true)+'/', fn).then(
+          (bExist) => this.addMsg("RECORD:checkfile INF: file exists:"+bExist+" ==>\n"+
+          this.soundService.getSoundDir(true)+'/'+fn),
            error => {
-             this.addMsg("checkfile ERR:"+this.soundService.getSoundDir(true)+fn);
+             this.addMsg("RECORD:checkfile ERR:"+this.soundService.getSoundDir(true)+'/'+fn);
              this.addMsg(JSON.stringify(error));
            }
         );
-    }*/
-    this.soundService.addSound(this.fileNameOfRecording);
-
-    this.fileOfRecording = null;
-    this.fileNameOfRecording = null;
+      this.file.resolveLocalFilesystemUrl(this.soundService.getSoundDir(true)+'/'+fn)
+        .then((file: FileEntry) => {
+          file.file(meta => {
+            this.addMsg("RECORD:meta INF: size:"+meta.size+" fn:"+this.soundService.getSoundDir(true)+'/'+fn);
+          }, error => {
+             this.addMsg("RECORD:meta ERR:"+this.soundService.getSoundDir(true)+'/'+fn);
+             this.addMsg(JSON.stringify(error));
+            });
+      });
+    }
   }
   public onRecordingRunning()
   {

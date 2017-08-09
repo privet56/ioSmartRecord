@@ -12,7 +12,7 @@ rem SET ANDROID_NDK_HOME=c:\android\android-ndk-r10e-windows-x86
 SET ANT_EXECUTABLE=C:\android\apache-ant-1.9.5\bin\ant.bat
 SET PATH=%JAVA_HOME%\bin;%ANDROID_HOME%\bin;%ANDROID_HOME%\build-tools\25.0.3;%ANDROID_HOME%\emulator;%ANDROID_HOME%\emulator\bin;%ANDROID_HOME%\tools;%ANDROID_HOME%\tools\bin;%GRADLE_HOME%;%GRADLE_HOME%\bin;%PATH%;
 
-rem if 'run' -> START FIRST: c:\android\sdk\emulator\startemulator.bat
+rem if 'run' -> START FIRST: cd c:\android\sdk\emulator & c:\android\sdk\emulator\startemulator.bat
 rem --device                                    // optional flag
 rem ionic build --release --prod android        //--prod destroys css
 rem ionic run --release --prod android          //--prod destroys css

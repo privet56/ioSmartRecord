@@ -12,8 +12,8 @@ import { File, Entry, RemoveResult } from '@ionic-native/file';
 export class SoundService
 {
     public static NAME = "name";
-    public static SOUNDFNPOSTFIX = '.lexng.mp3';    //.wav,.mp3,.m4a
-    public static SOUNDSUBDIR = 'lexng';    //.wav,.mp3,.m4a
+    public static SOUNDFNPOSTFIX = '.lexng.mp3';    //.wav,.mp3,.m4a,.amr
+    public static SOUNDSUBDIR = 'lexng';
 
     sounds: Array<Entry> = null;
     soundsSubject: BehaviorSubject<Array<Entry>> = new BehaviorSubject([]);
@@ -82,9 +82,12 @@ export class SoundService
 
         this.file.listDir(this.getSoundDir(false), SoundService.SOUNDSUBDIR).then(list => {
 
-            this.onerror(null, 'found: '+list.length+' sounds in dir:'+this.getSoundDir(true));
+            //this.onerror(null, 'found: '+list.length+' sounds in dir:'+this.getSoundDir(true));
 
             let f = (value:Entry, index:number, array) => {
+
+                //this.onerror(null, 'SERVICE:FOUND: '+value.nativeURL);
+
                 if(value.isFile && value.name.endsWith(SoundService.SOUNDFNPOSTFIX))
                 {
                     this.sounds.unshift(value);
@@ -99,9 +102,9 @@ export class SoundService
     }
     public getSoundDir(withSoundsSubdir:boolean) : string
     {
-        let dir:string = this.file.tempDirectory ? this.file.tempDirectory : this.file.applicationStorageDirectory;
+        let dir:string = this.file.tempDirectory ? this.file.tempDirectory : this.file.documentsDirectory;
         if(!dir)
-            dir = this.file.documentsDirectory;
+            dir = this.file.applicationStorageDirectory;
         if(!dir)
             dir = this.file.dataDirectory;
         if(withSoundsSubdir)
@@ -154,7 +157,7 @@ export class SoundService
             error => this.onerror(error, 'Error saving '+SoundService.NAME)
         );
     }
-    onerror(error, msg:string):void
+    public onerror(error, msg:string):void
     {
         if(msg)     console.error(msg);
         if(error)   console.error(error);
