@@ -1,8 +1,7 @@
 ## ioSmartRecord: IONIC 3 App; recording & maintaining voice
 
 ## UI:
-
-{{//TODO: insert pic}}
+![smartrecord](https://raw.githubusercontent.com/privet56/ioSmartRecord/master/lexngclient.on.smartphone.gif)
 
 ### //TODO:
 
@@ -26,8 +25,6 @@
     $ npm install --save @ionic-native/media
     $ ionic cordova plugin add cordova-plugin-file
     $ npm install --save @ionic-native/file
-
-. git & smartRecord
 
 . remove debug <textarea>
 
