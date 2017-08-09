@@ -1,0 +1,20 @@
+  <ion-item class="transparentbackground" style="padding-bottom:33px;">
+    Existing recordings:
+    <p *ngIf="sounds.length < 1">
+      no recordings yet.
+    </p>
+
+    <ion-item-sliding *ngFor="let sound of sounds" #slidingItem class="halbtransparentbackground">
+      <ion-item class="halbtransparentbackground">
+        {{sound.name | fn | date:'medium' }}
+      </ion-item>
+      <ion-item-options side="right">
+        <button ion-button icon-only (click)="playSound(slidingItem, sound)" color="secondary">
+          <ion-icon name="barcode"></ion-icon>
+        </button>
+        <button ion-button icon-only (click)="removeSound(slidingItem,sound)" color="danger">
+          <ion-icon name="trash"></ion-icon>
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+   </ion-item>

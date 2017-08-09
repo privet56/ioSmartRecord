@@ -1,0 +1,68 @@
+// http://ionicframework.com/docs/theming/
+
+
+// App Global Sass
+// --------------------------------------------------
+// Put style rules here that you want to apply globally. These
+// styles are for the entire app and not just one component.
+// Additionally, this file can be also used as an entry point
+// to import other Sass files to be included in the output CSS.
+//
+// Shared Sass variables, which can be used to adjust Ionic's
+// default Sass variables, belong in "theme/variables.scss".
+//
+// To declare rules for a specific mode, create a child rule
+// for the .md, .ios, or .wp mode classes. The mode class is
+// automatically applied to the <body> element in the app.
+
+.halbtransparentbackground
+{
+    $opacityFrom: 0.0001;
+    $opacityTo: 0.06;
+
+    background-color: transparent !important;
+    background: -webkit-linear-gradient(left, rgba(255,0,0,$opacityFrom), rgba(255,0,0,$opacityTo)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, rgba(255,0,0,$opacityFrom), rgba(255,0,0,$opacityTo)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, rgba(255,0,0,$opacityFrom), rgba(255,0,0,$opacityTo)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, rgba(255,0,0,$opacityFrom), rgba(255,0,0,$opacityTo)); /* Standard syntax (must be last) */
+}
+
+.transparentbackground
+{
+    background-color: transparent !important;
+}
+
+ion-content
+{
+    background-image:url(../assets/background.jpg);background-repeat:no-repeat;
+    background-repeat: no-repeat;
+    background-size:cover;
+}
+ion-header .toolbar-background
+{
+    $opacityFrom: 0.001;
+    $opacityTo: 0.2;
+    
+    background-color: transparent !important;
+    background: -webkit-linear-gradient(left, rgba(255,0,0,$opacityFrom), rgba(255,0,0,$opacityTo)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, rgba(255,0,0,$opacityFrom), rgba(255,0,0,$opacityTo)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, rgba(255,0,0,$opacityFrom), rgba(255,0,0,$opacityTo)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, rgba(255,0,0,$opacityFrom), rgba(255,0,0,$opacityTo)); /* Standard syntax (must be last) */
+
+    //-webkit-backdrop-filter: saturate(180%) blur(20px);
+    //backdrop-filter: saturate(180%) blur(20px);
+
+    //background-color: rgba(#f8f8f8, 0.55);
+}
+ion-list-header
+{
+    $opacityFrom: 0.001;
+    $opacityTo: 0.15;
+    
+    background-color: transparent !important;
+    background: -webkit-linear-gradient(left, rgba(255,0,0,$opacityFrom), rgba(255,255,0,$opacityTo)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, rgba(255,0,0,$opacityFrom), rgba(255,255,0,$opacityTo)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, rgba(255,0,0,$opacityFrom), rgba(255,255,0,$opacityTo)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(to right, rgba(255,0,0,$opacityFrom), rgba(255,255,0,$opacityTo)); /* Standard syntax (must be last) */
+}
+
