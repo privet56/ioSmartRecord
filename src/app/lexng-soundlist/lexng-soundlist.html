@@ -8,7 +8,9 @@
         class="halbtransparentbackground ngfor"
         [ngClass]="{'isplaying':isPlaying(sound)}">
       <ion-item class="halbtransparentbackground">
-        {{sound.name | fn2ts | date:'medium' }} {{isPlaying(sound) ? '(playing...)' : ''}}
+        {{sound.name | fn2ts | date:'medium' }}
+        ({{size(sound) | filesize }})
+        {{isPlaying(sound) ? ', (playing...)' : ''}}
       </ion-item>
       <ion-item-options side="right">
         <button ion-button icon-only (click)="playSound(slidingItem, sound)" color="secondary">

@@ -8,22 +8,27 @@ import { ToastController	}	from	'ionic-angular';
 import { Media, MediaObject } from '@ionic-native/media';
 import { File, Entry, FileEntry } from '@ionic-native/file';
 import { OnInit } from '@angular/core';
-import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ionic-native/media-capture';
+//https://ionicframework.com/docs/native/media-capture/
+import { MediaCapture, MediaFile, CaptureError, CaptureAudioOptions } from '@ionic-native/media-capture';
+//trying to record|convert? better? -> check
+  //https://github.com/keenan/cordova-phonegap-audio-encode
+  //https://github.com/emj365/cordova-plugin-audio-recorder-api
+  //https://github.com/SidneyS/cordova-plugin-nativeaudio
+  //https://github.com/remoorejr/cordova-plugin-media-with-compression  //m4a 
 
 @Component({
   selector: 'page-record',
   templateUrl: 'record.html'
 })
-export class RecordPage implements OnInit
+export class RecordPage2 implements OnInit
 {
-  public static MAX_RECORDING_SECONDS:number = 33;
-  public static MIN_RECORDING_SECONDS:number = 3; //TODO: should be min 6
+  public static RECORDING_LENGTH_IN_SECONDS:number = 7;
+  //public static MAX_RECORDING_SECONDS:number = 33;
+  //public static MIN_RECORDING_SECONDS:number = 3; //TODO: should be min 6
 
   @ViewChild('nameInputField') nameInputField;
   public timer:any = null;  //TODO: interrupt after 1 min recording
   public recordingStart:Date = null;
-  public sounds:Array<Entry> = Array<Entry>();
-  protected fileOfRecording: MediaObject = null;
   protected fileNameOfRecording: string = null;
   public msg:string="";
 
@@ -33,8 +38,7 @@ export class RecordPage implements OnInit
               public alertCtrl: AlertController,
               public events: Events,
               public toastCtrl:ToastController,
-              private media: Media,
-              private file: File,
+              protected file:File,
               private mediaCapture: MediaCapture)
   {
 
@@ -45,9 +49,6 @@ export class RecordPage implements OnInit
     this.soundService.errors$.subscribe((error:string) => {
       this.addMsg(error);
     });
-    this.soundService.sounds$.subscribe((sounds: Array<Entry> ) => {
-      this.sounds = sounds;
-    });
     this.soundService.name$.subscribe((name: string) => {
       this.nameInputField.nativeElement.value = name;
     });
@@ -55,20 +56,12 @@ export class RecordPage implements OnInit
     this.soundService.initName();
     this.soundService.initSounds(true);
 
-    /*{ //.T.ODO: remove temporary code
-      this.file.listDir(this.file.applicationDirectory,'www').then(list => {
-
-        this.addMsg('RECORD:ONINIT:FOUND files#: '+list.length);
-
-        let f = (value:Entry, index:number, array) => {
-
-            this.addMsg('RECORD:ONINIT:FOUND: '+value.nativeURL);
-        }
-        list.forEach(f);
-        }).catch((error) => {
-            this.addMsg('RECORD:ONINIT: ERR: !list');
-        })
-    }*/
+    this.mediaCapture.onPendingCaptureError().subscribe(captureError => {
+      this.addMsg("RECORD:PendingCaptureERROR:"+JSON.stringify(captureError));
+    });
+    this.mediaCapture.onPendingCaptureResult().subscribe(captureResult => {
+      this.addMsg("RECORD:PendingCaptureResult:"+JSON.stringify(captureResult));
+    });    
   }
 
   //https://stackoverflow.com/questions/42675727/how-to-block-navigation-to-other-tab-if-form-isnt-valid/42676245 	
@@ -91,53 +84,57 @@ export class RecordPage implements OnInit
   public onRecordStartStop()
   {
     if(this.timer)
-    {
-      let recordingTime:number= this.recordingTime();
-      let timer               = this.timer;
-      this.timer              = null;
-      this.recordingStart     = null;
-      clearInterval(timer);
-      this.saveRecording(recordingTime);
-      this.fileOfRecording = null;
-      this.fileNameOfRecording = null;
+    { //STOP
+      //stop not possible!
+      this.addMsg("RECORD:StopINFO:stop not possible");
+      return;
     }
     else
-    {
+    { //START
       this.timer = setInterval(() => {
         this.onRecordingRunning();
       }, 1000/*=1sec*/);
       this.recordingStart = new Date();
 
       this.fileNameOfRecording = (new Date()).getTime()+SoundService.SOUNDFNPOSTFIX;
+
       try
       {
-        let dir:string = this.soundService.getSoundDir(true)+'/';
+        let destDir:string = this.soundService.getSoundDir(true)+'/';
 
-        this.file.createFile(dir, this.fileNameOfRecording, true/*replace*/).then(() => {
-          let absFN = dir.replace(/^file:\/\//, '') + this.fileNameOfRecording;
+        this.addMsg("SUPPORTEDAUDIOMODES:"+JSON.stringify(this.mediaCapture.supportedAudioModes));
 
-          this.addMsg("Record:onRecordStart INF: absFN:'"+absFN+"'");
+        let options = {limit: 1, duration: RecordPage2.RECORDING_LENGTH_IN_SECONDS};
+        this.mediaCapture.captureAudio(options).then(
+            (data: MediaFile[]) => {
+              let absFnOfRecording  = data[0].fullPath;
+              let dirOfRecording    = absFnOfRecording.substring(0, absFnOfRecording.lastIndexOf('/')+1);
+              let fnOfRecording     = absFnOfRecording.substring(absFnOfRecording.lastIndexOf('/')+1);
 
-          this.fileOfRecording = this.media.create(absFN);
-          this.fileOfRecording.onError.subscribe(error => {
-            //error:MEDIA_ERROR
-            //MediaError.MEDIA_ERR_ABORTED = 1
-            this.addMsg("Record:onRecordStart ERR: fileOfRecording.onError");
-            this.addMsg(JSON.stringify(error));
-          });
-          this.fileOfRecording.startRecord();
-        },
-        error => 
-        {
-            console.error("Record:onRecordStart ERR");
-            console.error(error);
-            this.addMsg("Record:onRecordStart ERR");
-            this.addMsg(error);
-        });
+              this.addMsg("RECORD:BEFORECOPYINFO:"+"\n\tabsFnOfRecording:"+absFnOfRecording+"\n\tdirOfRecording:"+dirOfRecording+"\n\tfnOfRecording:"+fnOfRecording);
+
+              this.file.copyFile(dirOfRecording, fnOfRecording, destDir, this.fileNameOfRecording).then(
+                (re) => {
+                  this.addMsg("RECORD:COPYINFO:"+JSON.stringify(re));
+                  let recordingTime:number= this.recordingTime();
+                  let timer               = this.timer;
+                  this.timer              = null;
+                  this.recordingStart     = null;
+                  clearInterval(timer);
+                  this.saveRecording(recordingTime);
+                  this.fileNameOfRecording = null;
+                },
+                err => {
+                  this.addMsg("RECORD:COPYERROR:"+JSON.stringify(err));
+                });
+            },
+            (err: CaptureError) => {
+              this.addMsg("RECORD:CAPTUREERROR:"+JSON.stringify(err));
+            }
+          );
       }
       catch(e)
       {
-        console.log("CATCH");
         this.addMsg("CATCH");
         this.addMsg(e);
       }
@@ -145,12 +142,9 @@ export class RecordPage implements OnInit
   }
   public saveRecording(recordingTime:number)
   {
-    this.fileOfRecording.stopRecord();
-    this.fileOfRecording.release();
     let fn:string = this.fileNameOfRecording;
-    this.fileOfRecording = null;
     this.fileNameOfRecording = null;
-
+    /*
     if(recordingTime < RecordPage.MIN_RECORDING_SECONDS)
     {
       let	toast	=	this.toastCtrl.create({
@@ -159,13 +153,11 @@ export class RecordPage implements OnInit
         showCloseButton: true, closeButtonText:'x', dismissOnPageChange:true, //cssClass:'toast',
         duration:	2000});
       toast.present();
-      this.file.removeFile(this.soundService.getSoundDir(true), fn);
-      this.fileOfRecording    = null;
-      this.fileNameOfRecording= null;
+      this.fileNameOfRecording = null;      
       return;
-    }
+    }*/
     this.soundService.addSound(this.fileNameOfRecording);
-    { //TODO: remove temporary code on device!
+    /*{ //TODO: remove temporary code
       this.file.checkFile(this.soundService.getSoundDir(true)+'/', fn).then(
           (bExist) => this.addMsg("RECORD:checkfile INF: file exists:"+bExist+" ==>\n"+
           this.soundService.getSoundDir(true)+'/'+fn),
@@ -183,12 +175,12 @@ export class RecordPage implements OnInit
              this.addMsg(JSON.stringify(error));
             });
       });
-    }
+    }*/
   }
   public onRecordingRunning()
   {
     this.changeDetector.markForCheck(); // as stated by the angular team: the following is required, otherwise the view will not be updated
-
+    /*
     let recordingTime:number= this.recordingTime();
     if (recordingTime > RecordPage.MAX_RECORDING_SECONDS)
     {
@@ -198,8 +190,8 @@ export class RecordPage implements OnInit
         showCloseButton: true, closeButtonText:'x', dismissOnPageChange:true, //cssClass:'toast',
         duration:	2000});
       toast.present();
-      this.onRecordStartStop();
-    }
+      //this.onRecordStartStop(); //Promises are not cancellable! protected currentRecording : Promise<MediaFile[] | CaptureError> = null;
+    }*/
   }
   public isRecording() : boolean
   {
@@ -209,7 +201,11 @@ export class RecordPage implements OnInit
   {
     if(!this.isRecording()) return 0;
     let diff_ms:number = (new Date()).getTime() - this.recordingStart.getTime();
-    return Math.round(diff_ms / 1000);
+    Math.round(diff_ms / 1000);
+  }
+  public remainingTime() : number
+  {
+    return RecordPage2.RECORDING_LENGTH_IN_SECONDS - this.recordingTime();
   }
   public onNameChanged($event) : boolean
   {

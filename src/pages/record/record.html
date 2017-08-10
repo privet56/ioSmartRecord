@@ -13,21 +13,22 @@
       Name: &nbsp; <input type="text" (blur)="onNameChanged($event)" #nameInputField class="nameinput" style="width:80%" />
     </ion-item>
     <ion-item class="transparentbackground" style="padding-top:33px;text-align:center;">
-      <button style="background-color:transparent;" (click)="onRecordStart()">
+      <button style="background-color:transparent;" (click)="onRecordStartStop()">
         <img src="assets/{{isRecording() ? 'onair3.gif' : 'r5.png'}}"
           [ngClass]="{'rot': isRecording()}"
           style="width:166px;height:166px;" #recordImg />
         <br>
         <span *ngIf="!isRecording()"> Record!</span>
-        <span *ngIf="isRecording()">Recording {{recordingTime()}} seconds</span>
+        <span *ngIf="isRecording()"> Recording time: {{recordingTime()}} seconds</span>
       </button> 
     </ion-item>
 
     <lexng-soundlist></lexng-soundlist>
 
-    <ion-item>
+    <!-- DEBUG -->
+    <!-- ion-item>
       <textarea style="min-height:199px;width:99%;">{{msg}}</textarea>
-    </ion-item>
+    </ion-item -->
   
   </ion-list>
 </ion-content>

@@ -8,6 +8,7 @@ import {FormsModule} from '@angular/forms';
 
 import { SoundService } from './services/SoundService';
 import { FnPipe } from './services/FnPipe';
+import { FileSizePipe } from './services/FileSizePipe';
 
 import { AboutPage } from '../pages/about/about';
 import { RecordPage } from '../pages/record/record';
@@ -22,6 +23,7 @@ import { NativeStorage } from '@ionic-native/native-storage';
 import { Media } from '@ionic-native/media';
 import { File } from '@ionic-native/file';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MediaCapture, MediaFile, CaptureError, CaptureAudioOptions } from '@ionic-native/media-capture';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HomePage,
     TabsPage,
     SoundList,
-    FnPipe
+    FnPipe,
+    FileSizePipe
   ],
   imports: [
     BrowserModule,
@@ -57,6 +60,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     NativeStorage,
     File,
     Media,
+    MediaCapture,
     //Http, //-> Uncaught (in promise): Error: No provider for ConnectionBackend! Error: No provider for ConnectionBackend! at injectionError
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

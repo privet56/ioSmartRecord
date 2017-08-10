@@ -12,9 +12,8 @@
     1.4. ...
     UNFINISHED
 
-. create apk and copy it to lexng-client-for-android-apilevel-26.apk
-
 . recherche: why does --prod destroy some styles?
+    -> try update all! (after backup!)
     UNFINISHED
 
 . implement soundService with media & filesystem plugins
@@ -25,6 +24,8 @@
     $ npm install --save @ionic-native/media
     $ ionic cordova plugin add cordova-plugin-file
     $ npm install --save @ionic-native/file
+    $ ionic cordova plugin add cordova-plugin-media-capture
+    $ npm install --save @ionic-native/media-capture
 
 . remove debug <textarea>
 
@@ -36,20 +37,13 @@
 	partly DONE:
 	'ngfor' css class works, but do better with @animations
 
-. replace onIonViewEnter code into ngOnInit
-    DONE
-
-. soundList: show size
-
-. soundService: use wav & MONO
+. record: use wav & MONO
+    //https://ionicframework.com/docs/native/media-capture/
+    //https://github.com/keenan/cordova-phonegap-audio-encode
+    //https://github.com/emj365/cordova-plugin-audio-recorder-api
+    //https://github.com/SidneyS/cordova-plugin-nativeaudio
+    //https://github.com/remoorejr/cordova-plugin-media-with-compression  //m4a 
 
 . name area: factor out into its own component
 
-. rename pipe to Fn2Ts
-    DONE
-
-. onPlaySound: just stop if same(=now playing) sound clicked again
-
-. replace About icon
-
-. when -git: -UI -pic
+. git: -UI -pic
