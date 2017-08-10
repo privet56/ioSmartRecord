@@ -13,7 +13,6 @@
     UNFINISHED
 
 . recherche: why does --prod destroy some styles?
-    -> try update all! (after backup!)
     UNFINISHED
 
 . implement soundService with media & filesystem plugins
@@ -43,6 +42,7 @@
     //https://github.com/emj365/cordova-plugin-audio-recorder-api
     //https://github.com/SidneyS/cordova-plugin-nativeaudio
     //https://github.com/remoorejr/cordova-plugin-media-with-compression  //m4a 
+    UNFINISHED(because should be tested on DEVICE)
 
 . name area: factor out into its own component
 
