@@ -21,4 +21,8 @@ cls
 rem BUILD:
 rem ionic build --release --prod android
 rem BUILD & RUN:
-ionic cordova run --release android
+rem ionic cordova run --release android
+rem BUILD & RUN & DEBUG with the DEVICE on chrome://inspect
+rem rem ionic cordova run android --livereload
+rem BUILD & RUN & DEBUG with the emulator on chrome://inspect
+ionic cordova emulate android --livereload

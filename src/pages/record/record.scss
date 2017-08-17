@@ -7,6 +7,17 @@ page-record
         -khtml-border-radius: 10px; /* KHTML */
         border-radius: 10px; /* CSS3 */
     }
+    .nameioninput
+    {
+        $opacityFrom: 0.95;
+        $opacityTo: 0.65;
+        
+        background-color: transparent !important;
+        background: -webkit-linear-gradient(left, rgba(255,255,255,$opacityFrom), rgba(255,255,255,$opacityTo)); /* For Safari 5.1 to 6.0 */
+        background: -o-linear-gradient(right, rgba(255,255,255,$opacityFrom), rgba(255,255,255,$opacityTo)); /* For Opera 11.1 to 12.0 */
+        background: -moz-linear-gradient(right, rgba(255,255,255,$opacityFrom), rgba(255,255,255,$opacityTo)); /* For Firefox 3.6 to 15 */
+        background: linear-gradient(to right, rgba(255,255,255,$opacityFrom), rgba(255,255,255,$opacityTo)); /* Standard syntax (must be last) */
+    }
 }
 .rot
 {

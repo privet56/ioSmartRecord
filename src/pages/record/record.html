@@ -10,7 +10,13 @@
   <ion-list>
     <ion-list-header>Train me!</ion-list-header>
     <ion-item class="transparentbackground" style="padding-top:3px;text-align:left;">
-      Name: &nbsp; <input type="text" (blur)="onNameChanged($event)" #nameInputField class="nameinput" style="width:80%" />
+      <!-- Name: &nbsp; <input type="text" (blur)="onNameChanged($event)" #nameInputField class="nameinput" style="width:80%" /> -->
+      <ion-input type="text"
+        (keyup.enter)="onNameChanged($event)"
+        #nameInputField
+        class="nameinput nameioninput"
+        style="margin-bottom:9px;height:40px;"
+        placeholder="Name"></ion-input>
     </ion-item>
     <ion-item class="transparentbackground" style="padding-top:33px;text-align:center;">
       <button style="background-color:transparent;" (click)="onRecordStartStop()">

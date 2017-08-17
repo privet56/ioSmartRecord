@@ -1,25 +1,25 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { SoundService } from '../../app/services/SoundService';
-import { ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, ElementRef } from '@angular/core';
 import { AlertController } from 'ionic-angular';
-import { Events } from 'ionic-angular';
+import { Events, TextInput } from 'ionic-angular';
 import { ToastController	}	from	'ionic-angular';
 import { Media, MediaObject } from '@ionic-native/media';
 import { File, Entry, FileEntry } from '@ionic-native/file';
-import { OnInit } from '@angular/core';
+import { OnInit, AfterViewInit } from '@angular/core';
 import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ionic-native/media-capture';
 
 @Component({
   selector: 'page-record',
   templateUrl: 'record.html'
 })
-export class RecordPage implements OnInit
+export class RecordPage implements /*OnInit, */AfterViewInit
 {
   public static MAX_RECORDING_SECONDS:number = 33;
   public static MIN_RECORDING_SECONDS:number = 3; //TODO: should be min 6
 
-  @ViewChild('nameInputField') nameInputField;
+  @ViewChild('nameInputField') nameInputField:TextInput;
   public timer:any = null;  //TODO: interrupt after 1 min recording
   public recordingStart:Date = null;
   public sounds:Array<Entry> = Array<Entry>();
@@ -40,7 +40,8 @@ export class RecordPage implements OnInit
 
   }
   //ionViewWillEnter()    //comes after ionViewDidLoad
-  ngOnInit()
+  //ngOnInit()
+  ngAfterViewInit()
   {
     this.soundService.errors$.subscribe((error:string) => {
       this.addMsg(error);
@@ -49,7 +50,9 @@ export class RecordPage implements OnInit
       this.sounds = sounds;
     });
     this.soundService.name$.subscribe((name: string) => {
-      this.nameInputField.nativeElement.value = name;
+
+      this.nameInputField.setValue(name);
+      //this.nameInputField.nativeElement.value = name; //works with <input>
     });
 
     this.soundService.initName();

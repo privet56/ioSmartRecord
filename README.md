@@ -3,6 +3,10 @@
 ## UI
 ![smartrecord](https://raw.githubusercontent.com/privet56/ioSmartRecord/master/lexngclient.on.smartphone.gif)
 
+### Hints
+#### use ionic g page {mypage} , because it generates a new lazy-loaded NgModule
+#### debug with chrome://inspect & ionic cordova emulate android --livereload
+
 ### //TODO:
 
 . styles / images nicer
@@ -25,8 +29,6 @@
     $ npm install --save @ionic-native/file
     $ ionic cordova plugin add cordova-plugin-media-capture
     $ npm install --save @ionic-native/media-capture
-
-. remove debug <textarea>
 
 . conversation tab
 
