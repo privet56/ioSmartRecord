@@ -5,7 +5,7 @@ import { Events } from 'ionic-angular';
 import { BehaviorSubject } from 'rxjs/Rx';
 import 'rxjs/Rx';
 import { NativeStorage } from '@ionic-native/native-storage';
-import { File, Entry, RemoveResult } from '@ionic-native/file';
+import { File, Entry/*, RemoveResult*/ } from '@ionic-native/file';
 //import { Media } from '@ionic-native/media';
 
 @Injectable()

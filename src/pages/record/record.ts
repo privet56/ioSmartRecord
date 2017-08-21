@@ -1,20 +1,22 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild/*, OnDestroy*/ } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { SoundService } from '../../app/services/SoundService';
-import { ChangeDetectorRef, ElementRef } from '@angular/core';
+import { CompBase } from '../../app/services/CompBase';
+import { ChangeDetectorRef/*, ElementRef*/ } from '@angular/core';
 import { AlertController } from 'ionic-angular';
 import { Events, TextInput } from 'ionic-angular';
 import { ToastController	}	from	'ionic-angular';
 import { Media, MediaObject } from '@ionic-native/media';
 import { File, Entry, FileEntry } from '@ionic-native/file';
-import { OnInit, AfterViewInit } from '@angular/core';
-import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ionic-native/media-capture';
+import { /*OnInit, */AfterViewInit } from '@angular/core';
+//import { MediaCapture, MediaFile, CaptureError, CaptureImageOptions } from '@ionic-native/media-capture';
+//import { Subscription }   from 'rxjs/Subscription';
 
 @Component({
   selector: 'page-record',
   templateUrl: 'record.html'
 })
-export class RecordPage implements /*OnInit, */AfterViewInit
+export class RecordPage extends CompBase implements AfterViewInit
 {
   public static MAX_RECORDING_SECONDS:number = 33;
   public static MIN_RECORDING_SECONDS:number = 3; //TODO: should be min 6
@@ -26,6 +28,7 @@ export class RecordPage implements /*OnInit, */AfterViewInit
   protected fileOfRecording: MediaObject = null;
   protected fileNameOfRecording: string = null;
   public msg:string="";
+  
 
   constructor(public navCtrl:NavController,
               public soundService:SoundService,
@@ -35,43 +38,26 @@ export class RecordPage implements /*OnInit, */AfterViewInit
               public toastCtrl:ToastController,
               private media: Media,
               private file: File,
-              private mediaCapture: MediaCapture)
+//              private mediaCapture: MediaCapture
+            )
   {
-
+    super();
   }
   //ionViewWillEnter()    //comes after ionViewDidLoad
   //ngOnInit()
   ngAfterViewInit()
   {
-    this.soundService.errors$.subscribe((error:string) => {
+    this.subscriptions.push(this.soundService.errors$.subscribe((error:string) => {
       this.addMsg(error);
-    });
-    this.soundService.sounds$.subscribe((sounds: Array<Entry> ) => {
+    }));
+    this.subscriptions.push(this.soundService.sounds$.subscribe((sounds: Array<Entry> ) => {
       this.sounds = sounds;
-    });
-    this.soundService.name$.subscribe((name: string) => {
+    }));
+    this.subscriptions.push(this.soundService.name$.subscribe((name: string) => {
 
       this.nameInputField.setValue(name);
       //this.nameInputField.nativeElement.value = name; //works with <input>
-    });
-
-    this.soundService.initName();
-    this.soundService.initSounds(true);
-
-    /*{ //.T.ODO: remove temporary code
-      this.file.listDir(this.file.applicationDirectory,'www').then(list => {
-
-        this.addMsg('RECORD:ONINIT:FOUND files#: '+list.length);
-
-        let f = (value:Entry, index:number, array) => {
-
-            this.addMsg('RECORD:ONINIT:FOUND: '+value.nativeURL);
-        }
-        list.forEach(f);
-        }).catch((error) => {
-            this.addMsg('RECORD:ONINIT: ERR: !list');
-        })
-    }*/
+    }));
   }
 
   //https://stackoverflow.com/questions/42675727/how-to-block-navigation-to-other-tab-if-form-isnt-valid/42676245 	
@@ -217,6 +203,7 @@ export class RecordPage implements /*OnInit, */AfterViewInit
   public onNameChanged($event) : boolean
   {
     this.soundService.setName($event.target.value);
+    this.nameInputField.setBlur();
     return false;
   }
   public addMsg(msg:string):void

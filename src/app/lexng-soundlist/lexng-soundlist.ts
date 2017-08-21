@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ItemSliding } from 'ionic-angular';
 import { NavController } from 'ionic-angular';
 import { SoundService } from '../services/SoundService';
+import { CompBase } from '../services/CompBase';
+import { IoService } from '../services/IoService';
 import { OnInit } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { File, Entry, FileEntry, IFile } from '@ionic-native/file';
@@ -37,7 +39,7 @@ Input } from '@angular/core';*/
   ])
  ]*/
 })
-export class SoundList implements OnInit
+export class SoundList extends CompBase implements OnInit
 {
   public sounds:Array<Entry> = Array<Entry>();
   protected fileOfPlaying:MediaObject = null;
@@ -45,17 +47,18 @@ export class SoundList implements OnInit
 
   constructor(protected navCtrl: NavController,
               protected soundService:SoundService,
+              protected ioService:IoService,
               private media: Media,
               private file: File,
               public changeDetector:ChangeDetectorRef)
   {
-
+    super();
   }
   ngOnInit()
   {
-    this.soundService.sounds$.subscribe( ( sounds: Array<Entry> ) => {
+    this.subscriptions.push(this.soundService.sounds$.subscribe( ( sounds: Array<Entry> ) => {
       this.sounds = sounds;
-    });
+    }));
   }
   public stopSound()
   {
@@ -79,12 +82,12 @@ export class SoundList implements OnInit
     let absFN:string = sound.nativeURL.replace(/^file:\/\//, '');
     let soundsDir = this.soundService.getSoundDir(true)+'/';
     let onlyFN = sound.name;
-    { //TODO: remove temporary code
-      //play works with demo file!
+    if(!this.ioService.isProd())
+    {
       soundsDir = this.file.applicationDirectory + "www/assets/";
       onlyFN = "kabeljau.wav";
       absFN = soundsDir + onlyFN;
-      this.soundService.onerror(null, "SOUNDLIST:onPlay ERR: as record not supported on the sim, play demo file. Remove this code on device!:\n"+absFN);
+      this.soundService.onerror(null, "SOUNDLIST:onPlay WRN: as record not supported on the sim, play demo file. Remove this code on device!:\n"+absFN);
     }
 
     this.fileOfPlaying = this.media.create(absFN);
@@ -113,7 +116,7 @@ export class SoundList implements OnInit
       this.soundService.onerror(error, 'SOUNDLIST:play ERR fileOfPlaying.onError fn:\n'+absFN);
       this.stopSound();
     });
-    let duration:number = this.fileOfPlaying.getDuration();
+    //let duration:number = this.fileOfPlaying.getDuration();
     this.fileOfPlaying.play();
     this.soundCurrentlyPlaying = sound;
     slidingItem.close();
@@ -176,7 +179,7 @@ export class SoundList implements OnInit
     this.file.resolveLocalFilesystemUrl(sound.nativeURL)
       .then((file: FileEntry) => {
         file.file((meta:IFile) => {
-          this.soundService.onerror(null, 'lexng-soundlist INF size:'+meta.size);
+          //this.soundService.onerror(null, 'lexng-soundlist INF size:'+meta.size);
           sound["size"] = meta.size;
           this.changeDetector.markForCheck(); // the following is required, otherwise the view will not be updated
         }, error => {
@@ -188,5 +191,4 @@ export class SoundList implements OnInit
     return 0;
     //return this.file.resolveLocalFilesystemUrl(sound.nativeURL);
   }
-  
 }

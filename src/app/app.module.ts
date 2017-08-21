@@ -7,6 +7,7 @@ import {HttpModule} from '@angular/http';
 import {FormsModule} from '@angular/forms';
 
 import { SoundService } from './services/SoundService';
+import { IoService } from './services/IoService';
 import { FnPipe } from './services/FnPipe';
 import { FileSizePipe } from './services/FileSizePipe';
 
@@ -23,7 +24,7 @@ import { NativeStorage } from '@ionic-native/native-storage';
 import { Media } from '@ionic-native/media';
 import { File } from '@ionic-native/file';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MediaCapture, MediaFile, CaptureError, CaptureAudioOptions } from '@ionic-native/media-capture';
+import { MediaCapture/*, MediaFile, CaptureError, CaptureAudioOptions*/ } from '@ionic-native/media-capture';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { MediaCapture, MediaFile, CaptureError, CaptureAudioOptions } from '@ion
     StatusBar,
     SplashScreen,
     SoundService,
+    IoService,
     NativeStorage,
     File,
     Media,

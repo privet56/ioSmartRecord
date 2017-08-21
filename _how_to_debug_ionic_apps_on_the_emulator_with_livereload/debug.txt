@@ -1,0 +1,3 @@
+$ startemulator.bat         //with ionic cordova emulate android --livereload
+$ startbuildandroid.bat
+chrome://inspect
