@@ -9,8 +9,7 @@
 
 ### //TODO:
 
-. styles / images nicer
-```
+. styles / images nicer```
   1.1. header with partially opaque background, with nice colors
   1.2. home pic with better transparency, eg. with gimp
   1.3. sound list with better background gradient, with nice colors
@@ -21,8 +20,7 @@
 . recherche: why does --prod destroy some styles?
   UNFINISHED
 
-. implement soundService with media & filesystem plugins
-```
+. implement soundService with media & filesystem plugins```
   used native cordova/ioni plugins:
   $ ionic cordova plugin add cordova-plugin-nativestorage
   $ npm install --save @ionic-native/native-storage
@@ -38,14 +36,12 @@
 
 . settings tab: configure min & max recording length
 
-. soundlist: track by name & animation
-```
+. soundlist: track by name & animation```
   partly DONE:
   'ngfor' css class works, but do better with @animations
 ```
 
-. record: use wav & MONO
-```
+. record: use wav & MONO```
   //https://ionicframework.com/docs/native/media-capture/
   //https://github.com/keenan/cordova-phonegap-audio-encode
   //https://github.com/emj365/cordova-plugin-audio-recorder-api
