@@ -7,6 +7,9 @@
 #### use ionic g page {mypage} , because it generates a new lazy-loaded NgModule
 #### debug with chrome://inspect & ionic cordova emulate android --livereload
 
+## Workflow
+![smartrecordwf](https://raw.githubusercontent.com/privet56/ioSmartRecord/master/iosmartrecord.workflow.gif)
+
 ### //TODO:
 
 . styles / images nicer
@@ -18,7 +21,8 @@
 ```
 
 . recherche: why does --prod destroy some styles?
-  UNFINISHED
+``` UNFINISHED
+```
 
 . implement soundService with media & filesystem plugins
 ``` used native cordova/ioni plugins:

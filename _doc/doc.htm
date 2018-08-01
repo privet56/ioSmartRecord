@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>LexNg</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/tether.min.css">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/bootstrap-grid.min.css">
+	<link rel="stylesheet" href="css/bootstrap-reboot.min.css">
+	<link rel="stylesheet" href="css/css.css">
+
+	<script src="js/jquery-3.2.1.min.js"></script>
+	<script src="js/tether.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/raphael-min.js"></script>
+	<script src="js/graffle.js"></script>
+	<script src="js/com.ng.js"></script>
+	<script src="js/com.ng.lexng.js"></script>
+	<script src="js/com.ng.workflow.js"></script>
+	
+	<script>
+	jQuery(document).ready(function()
+	{
+		com.ng.workflow.start(document.getElementById('container-workflow-train'), document.getElementById('container-workflow-recognition'));
+	});
+	</script>
+</head>
+<body>
+<h1> <img src="img/siri.png" style="width:32px"> LexNg</h1>
+
+<div style="margin-left:6px;margin-right:6px;margin-top:33px;">
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#intro" role="tab">Intro</a>
+	</li>
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#workflow" role="tab">Workflow</a>
+  </li>	
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#facts" role="tab">Facts & Risks</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#frontend" role="tab">Frontend</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#backend" role="tab">Backend</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#skill" role="tab">Skill</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link disabled" data-toggle="tab" href="#technicalinfo" role="tab">Technical Details</a>
+  </li>  
+</ul>
+
+<div class="tab-content" style="margin-left:6px;margin-right:6px;margin-top:13px;">
+
+  <div class="tab-pane" id="intro" role="tabpanel" style="background-color:#fff2f2;">
+	<h2>Introduction to LexNg</h2>
+	Target of the project:
+	<ol>
+		<li><strong>Return individualized response from an Alexa Skill, based on the individual recognition due to the person's voice.</strong></li>
+		<li>We write a smartphone app which records the user's voice, send this to AVS (Alexa Voice Service) AND at the same time we use a server-side voice recognition algorithm to identify the speaking person</li>
+	</ol>
+  </div>
+	
+  <div class="tab-pane" id="facts" role="tabpanel" style="background-color:#f2fff2;">
+	<h2>Known Facts:</h2>
+	<ol>
+		<li>The communication over Alexa Echo Devices <strong>doesn't</strong> allow (yet!) access to the voice, so a voice recognition is not possible</li>
+		<li>The Alexa Voice Service (AVS) allows to call the Alexa Speech recognition from a nagarro-written smartphone app. AVS returns the response to the speech to the smartphone app.</li>
+	</ol>
+	<h2>RISKS:</h2>
+	<ol style="color:red">
+		<li><strong>Does AVS forward user-specific parameter to our Skill?</strong>
+			<div class="answer">Question is posted in the amazon forum:<br>
+				<a href="https://forums.developer.amazon.com/questions/81150/custom-attribute-through-avs-to-my-skill.html" target="_new">https://forums.developer.amazon.com/questions/81150/custom-attribute-through-avs-to-my-skill.html</a><br>
+				The Answer tells, that it's <strong>not</strong> possible to pass custom attributes through AVS to backend Skills.
+			</div>
+		</li>
+		<li>No version control (GIT, SVN, etc.) will be used (because I don't know any available system at nagarro)</li>
+		<li>Recognition certainty not high enough.<br>
+			See examples of questionable results based on third party image recognition algorithms:
+			<ol>
+				<li>The <u>fourth</u> response to
+					<a href="https://www.yammer.com/nagarro.com/#/Threads/show?threadId=782095226" target="_new">https://www.yammer.com/nagarro.com/#/Threads/show?threadId=782095226</a>
+					describes some questionable findings regarding existing recognition algorithms</li>
+				<li>Example usage of image recognition algorithms from APPLE shows some ~"interesting" results if applied to
+					not-completely-optimized images, see
+					<a href="https://raw.githubusercontent.com/privet56/iBun/master/ibun.recognition.gif" onclick="com.ng.lexng.onpic(this);" target="_new">https://raw.githubusercontent.com/privet56/iBun/master/ibun.recognition.gif</a>
+			</ol>
+		</li>
+		<li>Recognition AND subsequent Skill execution takes too long to be used in real time</li>
+		<li>On Azure: Training possible?
+			<div class="answer">Answer: YES, see <a href="https://azure.microsoft.com/de-de/services/cognitive-services/speaker-recognition/" target="_new">https://azure.microsoft.com/de-de/services/cognitive-services/speaker-recognition/</a></div>
+		</li>
+		<li>Upload of large amount of data from the smartphone takes too long</li>
+	</ol>
+  </div>
+
+  <div class="tab-pane active" id="workflow" role="tabpanel" style="background-color:#f2fff2;">
+	 <h2>Workflow</h2>
+	 <h3>Training:</h3>
+		<div class="desc">Smartphone sends voice to a REST WebService, which builds the model based on it and saves the result on EFS.</div>
+		<div class="tab" style="text-align:center">
+			
+				<div class="container-workflow container-workflow-train" id="container-workflow-train">
+				</div>
+		</div>
+		<h3>Recognition:</h3>
+			<div class="desc">
+				Smartphone <i>(?logs the user in? and)</i> sends voice to our REST WebService which recognizes the user (based on the recorded model) and returns her/his ID.<br>
+				&nbsp; &nbsp;(this happens independently of trigger of our Skill!)<br>
+				After receiving the user id, the phone sends the same voice to Alexa Voice Service (AVS) with the user ID as custom attribute.<br>
+				AVS activates our Skill, which returns a personalized response based on the sent ID
+			</div>
+			<div class="tab" style="text-align:center">
+				<div class="container-workflow container-workflow-recognition" id="container-workflow-recognition">
+				</div>
+			</div>
+  </div>
+  
+  <div class="tab-pane" id="frontend" role="tabpanel" style="background-color:#f2f2ff;">
+	<h2>Frontent: a Smartphone App</h2>
+	<table><tr><td style="vertical-align:top;">
+	<ol>
+		<li>A smartphone app for current ANDROID devices will be created<br>
+		<strong>Example: <a href="" onclick="return com.ng.lexng.openSmartphoneWin('lexngclient/index.html');">LexNg Client</a></strong><br>
+		(whereby the development only can be done with a real device, as "The Android Emulator cannot record audio" 
+		(<a href="https://developer.android.com/guide/topics/media/mediarecorder.html" target="_new">source-2</a>, <a href="./img/emulator.cannot.record.png" target="_new">source-2</a>)
+		</li>
+		<li>Technology: <a href="https://ionicframework.com/" target="_new">IONIC 3</a> (see example implementation: <a href="https://github.com/privet56/ioBun" target="_new">//github.com/privet56/ioBun</a>)</li>
+		<li>The app will:
+			<ol>
+				<li>record the user's voice</li>
+				<li>identify the user (by using a server-side nagarro-written service)<br>
+					(this step can be <strong>unusual</strong>, as the AVS WebService is designed for a workflow with a login at the start.)<br>
+					Will we log in the user with AVS?
+				</li>
+				<li>send the speech to Alexa Voice Service (AVS) incl.(!) the determined user id in a custom attribute (if possible!),<br>
+					to get a personified answer from hopefully our Skill.<br>
+				 (can be unusual, as the normal flow suggests STREAMING).</li>
+				<li>present the (hopefully) personified answer (in speech or text form)</li>
+				<li>(Another/Admin functionality: train the voice identification webservice)</li>
+			</ol>
+		</li>
+	</ol>
+	</td>
+	<td style="padding-left:19px;">
+		<img src="img/lexngclient.on.smartphone.gif" style="width:233px" />
+	</td>
+	
+	</tr></table>
+  </div>
+  <div class="tab-pane" id="backend" role="tabpanel" style="background-color:#f2f2f2;">
+	<h2>Backend: a nagarro-written REST WebService with JSON data exchange format</h2>
+	<ol>
+		<li>The webservice will receive the spoken voice in binary form (ATTENTION: can be large!!!)</li>
+		<li>The backend program identifies the person and returns her/his ID</li>
+		<li>Possible technologies:
+			<ol>
+				<li>self implemented functionality from scratch based on mathematical algorithms like fourier analyse or machine learning
+					
+				</li>
+				<li>customize existing frameworks, like MISTRAL, ALIZE, ppwwyyxx
+					<div class="answer">
+						A first result can be seen here:
+						<a href="./img/train.and.recognition.8.png" target="_new">train.and.recognition.png</a><br>
+						(based on <a href="https://github.com/privet56/speaker-recognition" target="_new">https://github.com/privet56/speaker-recognition</a>)
+					</div>
+				</li>
+				<li>use existing third party services, eg AZURE (possibly with costs)
+					<div class="answer">
+						AZURE would support all the necessary functions (speech-to-text, speaker-recognition or bots), e.g. <br>
+						<a href="https://azure.microsoft.com/de-de/services/cognitive-services/speaker-recognition/" target="_new">https://azure.microsoft.com/de-de/services/cognitive-services/speaker-recognition/</a><br>
+						<a href="https://msdn.microsoft.com/en-us/library/jj127860.aspx" target="_new">https://msdn.microsoft.com/en-us/library/jj127860.aspx</a><br>
+						(functionality partly requires .NET development on Windows)
+					</div>
+				</li>
+			</ol>
+		<li>NO security will be implemented in this version</li>
+		<li>(Another/Admin functionality: train the voice identification webservice)</li>
+	</ol>
+  </div>
+  <div class="tab-pane" id="skill" role="tabpanel" style="background-color:#ffeaff;">
+	<h2>Alexa Skill</h2>
+	The Skill greets the user with her/his name and responds to specific questions (which questions should be understood by this skill?)
+  </div>
+
+</div>
+
+</div>
+
+<footer class="footer">
+  <div style="margin-left:9px;margin-right:9px;">
+	<span class="text-muted"> <img src="img/siri.png" style="width:24px"> LexNg, a Nagarro software</span>
+  </div>
+</footer>
+
+</body>
+</html>
